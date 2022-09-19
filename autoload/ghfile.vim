@@ -1,6 +1,6 @@
 function! ghfile#GetLink(reponame) abort
   let l:path = shellescape(expand('%'))
-  let l:path = substitute(l:path, reponame, "")
+  let l:path = substitute(l:path, a:reponame, "")
   let l:path = substitute(l:path, "/home/"..getenv('USER').."/Repos/", "", "")
   let l:ghlink = system("ghfile "..a:reponame.."/tree/main/"..l:path)
 
