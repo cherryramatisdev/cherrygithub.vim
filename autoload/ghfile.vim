@@ -1,3 +1,11 @@
+function! s:mountLinkIfRange(ghlink, range, line1, line2) abort
+  if a:range != 0
+    return a:ghlink.."#L"..a:line1.."-".."#L"..a:line2
+  else
+    return a:ghlink
+  endif
+endfunction
+
 function! ghfile#GetLink(reponame) abort
   let l:path = shellescape(expand('%'))
   let l:path = substitute(l:path, a:reponame.."/", "", "")
@@ -7,7 +15,7 @@ function! ghfile#GetLink(reponame) abort
   return l:ghlink
 endfunction
 
-function! ghfile#CopyCurrentFileGithub() abort
+function! ghfile#CopyCurrentFileGithub(range, line1, line2) abort
   let l:response = system("echo -n $(basename $(git rev-parse --show-toplevel))")
 
   if len(l:response) >= 0
@@ -16,7 +24,7 @@ function! ghfile#CopyCurrentFileGithub() abort
     let l:reponame = input("Tell me the repo name: ")
   endif
 
-  let l:ghlink = ghfile#GetLink(l:reponame)
+  let l:ghlink = s:mountLinkIfRange(ghfile#GetLink(l:reponame), a:range, a:line1, a:line2)
 
   if executable("yank")
     call system("yank "..l:ghlink)
@@ -24,7 +32,7 @@ function! ghfile#CopyCurrentFileGithub() abort
   endif
 endfunction
 
-function! ghfile#OpenCurrentFileGithub() abort
+function! ghfile#OpenCurrentFileGithub(range, line1, line2) abort
   let l:response = system("echo -n $(basename $(git rev-parse --show-toplevel))")
 
   if len(l:response) >= 0
@@ -33,7 +41,7 @@ function! ghfile#OpenCurrentFileGithub() abort
     let l:reponame = input("Tell me the repo name: ")
   endif
 
-  let l:ghlink = ghfile#GetLink(l:reponame)
+  let l:ghlink = s:mountLinkIfRange(ghfile#GetLink(l:reponame), a:range, a:line1, a:line2)
 
   if executable("explorer.exe")
     call system("explorer.exe "..l:ghlink)
