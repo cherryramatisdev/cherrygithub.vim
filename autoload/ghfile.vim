@@ -46,9 +46,12 @@ function! ghfile#OpenCurrentFileGithub(range, line1, line2) abort
 
   let l:ghlink = s:mountLinkIfRange(ghfile#GetLink(l:reponame), a:range, a:line1, a:line2)
 
-  if executable("explorer.exe")
-    call system("explorer.exe "..l:ghlink)
-    if executable("yank")
+  if executable("open")
+    call system("open "..l:ghlink)
+    if executable("pbcopy")
+      call system("echo "..l:ghlink.."| pbcopy")
+      echohl Function | echomsg "Saved on the clipboard"
+    elseif executable("yank")
       call system("yank "..l:ghlink)
       echohl Function | echomsg "Saved on the clipboard"
     endif
